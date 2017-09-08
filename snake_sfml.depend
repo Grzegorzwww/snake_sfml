@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1504865195 source:/home/gwarchol/codeblocks_workspace/snake_sfml/main.cpp
+1504870480 source:/home/gwarchol/codeblocks_workspace/snake_sfml/main.cpp
 	<SFML/Graphics.hpp>
 	<TGUI/TGUI.hpp>
 	"items.h"
@@ -12,14 +12,15 @@
 	<iostream>
 	"SFML/Graphics.hpp"
 
-1504865412 /home/gwarchol/codeblocks_workspace/snake_sfml/include/game.h
+1504870551 /home/gwarchol/codeblocks_workspace/snake_sfml/include/game.h
 	"iostream"
 	"items.h"
+	<SFML/System.hpp>
 
 1504863751 /home/gwarchol/codeblocks_workspace/snake_sfml/include/items.h
 	<iostream>
 	"SFML/Graphics.hpp"
 
-1504865195 source:/home/gwarchol/codeblocks_workspace/snake_sfml/src/game.cpp
+1504870602 source:/home/gwarchol/codeblocks_workspace/snake_sfml/src/game.cpp
 	"game.h"
 

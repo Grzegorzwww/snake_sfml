@@ -51,7 +51,7 @@ SnakeTail::SnakeTail(int _x, int _y, ItemType_t type) : Item(_x, _y, type)
          std::cerr << "Fail to load texture: _snake_tex.png"<<std::endl;
     }
     shape->setTexture(m_tex);
-    //m_tex->setSmooth(true);
+
 
 
 
