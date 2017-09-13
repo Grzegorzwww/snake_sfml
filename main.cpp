@@ -8,28 +8,26 @@
 
 using namespace std;
 
-void game_init(Item **snake_body);
-void game_display(Item **snake_body ,  sf::RenderWindow *window);
+
 
 
 int main()
 {
     sf::RenderWindow app(sf::VideoMode(800, 600), "SFML Snake");
+
     tgui::Gui gui{app};
 
 
-    //list <Item> snake_body;
-    //Item *snake_body[10];
 
 
-
-    game_init(snake_body);
-
+    Item *snake_body[255];
+    for(int i = 0; i < 255; i++){
+        snake_body[i] = nullptr;
+    }
 
 
     Game *game = new Game(snake_body, &app);
-
-
+    game->game_init();
 
 
 
@@ -40,24 +38,15 @@ int main()
     {
 
 
-
-
-
-
-
-
-        game->control_keboard_events();
+        game->control_events();
 
         game->control_timer();
-
-
-
+        game->make_item_to_eat();
+        game->collision_detect();
 
         gui.draw();
 
         game->game_display();
-
-
     }
 
 
@@ -66,10 +55,5 @@ int main()
 }
 
 
-void game_init(Item **snake_body)
-{
-    snake_body[0] = new SnakeHead(10, 10, Head);
-    snake_body[1] = new SnakeTail(10, 10, Tail);
-    snake_body[0]->move(35,0);
-}
+
 
