@@ -2,7 +2,17 @@
 #define GAME_H
 
 #include "iostream"
+#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 #include "../items.h"
+#include "Menu.h"
+#include <string>
+#include <iomanip>
+
+#include <sstream>
+
+
 
 
 typedef enum {Up, Down, Right, Left} direction_t;
@@ -59,6 +69,11 @@ class Game
         Game();
         Game(Item **snake, sf::RenderWindow *app_instance);
         virtual ~Game();
+        //void (*)(void)
+
+        Menu *menu;
+
+
         void control_events();
         void control_timer();
         void game_display();
@@ -69,6 +84,8 @@ class Game
         void new_game();
         void collision_detect();
         void make_item_to_eat();
+        void pauzeGame();
+        void resumeGame();
 
 
 
@@ -76,6 +93,8 @@ class Game
 
         sf::RenderWindow *app_ptr;
         sf::Time elapsed;
+        sf::Time play_time;
+        sf::Clock play_clock;
         sf::Clock clock;
         sf::Clock food_clock;
         sf::Clock poison_clock;
@@ -107,6 +126,8 @@ class Game
         int poison_time_to_wait;
 
         ItemType_t acual_effect;
+
+
 
 
 

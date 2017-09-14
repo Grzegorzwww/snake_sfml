@@ -1,27 +1,42 @@
 # depslib dependency file v1.0
-1505302419 source:/home/gwarchol/codeblocks_workspace/snake_sfml/main.cpp
+1505381038 source:/home/gwarchol/codeblocks_workspace/snake_sfml/main.cpp
 	<SFML/Graphics.hpp>
 	<TGUI/TGUI.hpp>
 	"items.h"
 	"game.h"
 	<list>
+	"Menu.h"
 
 1505293460 source:/home/gwarchol/codeblocks_workspace/snake_sfml/items.cpp
 	"items.h"
 
-1505294347 /home/gwarchol/codeblocks_workspace/snake_sfml/items.h
+1505389005 /home/gwarchol/codeblocks_workspace/snake_sfml/items.h
 	<iostream>
 	"SFML/Graphics.hpp"
 
-1505296692 /home/gwarchol/codeblocks_workspace/snake_sfml/include/game.h
+1505390770 /home/gwarchol/codeblocks_workspace/snake_sfml/include/game.h
 	"iostream"
+	<cstdlib>
+	<stdio.h>
+	<stdlib.h>
 	"../items.h"
+	"Menu.h"
+	<string>
+	<iomanip>
+	<sstream>
 
 1505201311 /home/gwarchol/codeblocks_workspace/snake_sfml/include/items.h
 	<iostream>
 	"SFML/Graphics.hpp"
 
-1505302274 source:/home/gwarchol/codeblocks_workspace/snake_sfml/src/game.cpp
+1505391835 source:/home/gwarchol/codeblocks_workspace/snake_sfml/src/game.cpp
 	"game.h"
 	"../items.h"
+
+1505392011 /home/gwarchol/codeblocks_workspace/snake_sfml/include/Menu.h
+	"iostream"
+	"SFML/Graphics.hpp"
+
+1505392009 source:/home/gwarchol/codeblocks_workspace/snake_sfml/src/Menu.cpp
+	"Menu.h"
 

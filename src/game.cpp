@@ -1,6 +1,8 @@
 #include "game.h"
 #include "../items.h"
 
+//#include "Menu.h"
+
 
 using namespace std;
 
@@ -13,7 +15,10 @@ Game::Game(Item **snake, sf::RenderWindow *app_instance) : items_ptr(snake), app
 {
     //ctor
 
+
     elapsed  = clock.restart();
+    play_time = clock.restart();
+
     direction = Right;
     snake_length = 0;
     score = 0;
@@ -32,6 +37,7 @@ Game::Game(Item **snake, sf::RenderWindow *app_instance) : items_ptr(snake), app
 
     prev_position = sf::Vector2f(0,0);
     prev_position_temp = sf::Vector2f(0,0);
+    menu = new Menu(app_ptr->getSize().x, app_ptr->getSize().y);
 
 
 
@@ -45,6 +51,8 @@ Game::Game(Item **snake, sf::RenderWindow *app_instance) : items_ptr(snake), app
 Game::~Game()
 {
     //dtor
+    delete menu;
+
 }
 
 
@@ -176,7 +184,7 @@ void Game::control_timer()
             let_create_new_snake_food = true;
 
         food_clock.restart();
-        cout <<"elapsed food"<<endl;
+       // cout <<"elapsed food"<<endl;
        // elapsed = 0;
 
     }
@@ -189,11 +197,23 @@ void Game::control_timer()
             let_create_new_snake_poison = true;
 
         poison_clock.restart();
-        cout <<"elapsed poison"<<endl;
+       // cout <<"elapsed poison"<<endl;
          //elapsed = 0;
     }
-}
 
+    if(!snake_stop_flag ) {
+        play_time = play_clock.getElapsedTime();
+        stringstream ss;
+        ss.setf( std::ios::fixed, std:: ios::floatfield );
+        ss <<setprecision(2)<< play_time.asSeconds();
+        string str = ss.str();
+        menu->setGameTime(str);
+    }
+
+
+
+}
+//void (*)(void) menu_ptr
 void Game::control_events()
 {
     /*cout <<"x = "<< window_width <<endl;
@@ -205,8 +225,35 @@ void Game::control_events()
         if( zdarzenie.type == sf::Event::Closed )
             app_ptr->close();
 
-        if( zdarzenie.type == sf::Event::KeyPressed && zdarzenie.key.code == sf::Keyboard::Escape )
-            app_ptr->close();
+        if( zdarzenie.type == sf::Event::KeyPressed && zdarzenie.key.code == sf::Keyboard::Escape ){
+            //app_ptr->close();
+            pauzeGame();
+            menu->showMenu();
+        }
+        if( zdarzenie.type == sf::Event::KeyPressed && zdarzenie.key.code == sf::Keyboard::Return ) {
+            //app_ptr->close();
+            switch(menu->GetPresesedItem()) {
+            case 0: //new game
+
+                new_game();
+                menu->hideMenu();
+
+
+                break;
+            case 1://continue
+
+                menu->hideMenu();
+                resumeGame();
+                break;
+            case 2://exit
+
+                app_ptr->close();
+
+                break;
+
+            }
+        }
+
 
         if( zdarzenie.type == sf::Event::MouseButtonPressed && zdarzenie.mouseButton.button == sf::Mouse::Middle )
             app_ptr->close();
@@ -252,7 +299,7 @@ void Game::control_events()
 
             if( sf::Keyboard::isKeyPressed( sf::Keyboard::Up) )
             {
-               // cout << "Up"<<endl;
+                menu->MoveUp();
                 if(direction != Down)
                     direction = Up;
 
@@ -260,7 +307,7 @@ void Game::control_events()
 
             if( sf::Keyboard::isKeyPressed( sf::Keyboard::Down) )
             {
-               // cout << "Down"<<endl;
+               menu->MoveDown();
                 if(direction != Up)
                     direction = Down;
             }
@@ -326,10 +373,16 @@ void Game::game_display()
 
 
 
+      menu->draw(*app_ptr);
+
+      app_ptr->display();
 
 
 
-    app_ptr->display();
+
+
+
+
 
 
 }
@@ -398,10 +451,22 @@ void Game::collision_detect()
             if(h->getShape().getGlobalBounds().intersects(b->getShape().getGlobalBounds()))
             {
                 cout << "kolizja"<<endl;
+
+                 stringstream ss;
+                ss <<setprecision(2)<< score << " - punktow w " << play_time.asSeconds() <<" sekund !";
+                string str = ss.str() ;
+
+
+                menu->setResultMsg(str);
+                menu->show_hide_result(true);
+
                 snake_stop_flag = true;
+                pauzeGame();
             }
             else
             {
+           ///     menu->show_hide_result(false);
+
 
 
 
@@ -411,9 +476,12 @@ void Game::collision_detect()
 
                 if(h->getShape().getGlobalBounds().intersects(f->getShape().getGlobalBounds()))
                 {
-                    cout << "zabranie jedzenia"<<endl;
                     score++;
-                    cout <<"score = "<<score<<endl;
+                    stringstream ss;
+                    ss <<  score;
+                    string str = ss.str();
+                    menu->setScore( str, sf::Vector2f(10,10));
+
                     create_new_snake_item();
                     delete item_eat;
                     item_eat = nullptr;
@@ -442,6 +510,14 @@ void Game::collision_detect()
 
                 if(h->getShape().getGlobalBounds().intersects(p->getShape().getGlobalBounds()))
                 {
+                    score++;
+                    stringstream ss;
+                    ss <<  score;
+                    string str = ss.str();
+                    menu->setScore( str, sf::Vector2f(10,10));
+
+
+
                     cout << "zabrana trucizna"<<endl;
                     if(item_posion->get_item_type() == Beer ){
                          acual_effect = Beer;
@@ -503,11 +579,31 @@ void Game::make_item_to_eat()
 
 
 void Game::new_game(){
+
     for(int i = 0 ; i < snake_length; i++){
         delete items_ptr[i];
     }
+    if(item_eat != nullptr){
+        delete item_eat;
+        item_eat = nullptr;
+    }
+    if(item_posion != nullptr){
+        delete item_posion;
+        item_posion = nullptr;
+    }
 
     game_init();
+    menu->show_hide_result(false);
+    resumeGame();
+
 
 }
+void Game::pauzeGame() {
+    snake_stop_flag = true;
+}
+void Game::resumeGame() {
+    snake_stop_flag = false;
+}
+
+
 
