@@ -121,6 +121,8 @@ class Game
         bool let_create_new_snake_food;
         bool let_create_new_snake_poison;
 
+        bool full_speed_active_flag;
+
 
         int food_time_to_wait;
         int poison_time_to_wait;

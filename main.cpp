@@ -45,7 +45,6 @@ int main()
         game->control_timer();
         game->make_item_to_eat();
         game->collision_detect();
-
         game->game_display();
 
 

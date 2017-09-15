@@ -46,10 +46,12 @@
 			<Add option="-std=c++11" />
 		</Compiler>
 		<Unit filename="cb.bmp" />
+		<Unit filename="include/Menu.h" />
 		<Unit filename="include/game.h" />
 		<Unit filename="items.cpp" />
 		<Unit filename="items.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Menu.cpp" />
 		<Unit filename="src/game.cpp" />
 		<Extensions>
 			<code_completion />

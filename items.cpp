@@ -135,6 +135,7 @@ void SnakeFood::set_position(sf::Vector2f &pos)
 sf::Vector2f SnakeFood::get_position()
 {
 
+
     return shape->getPosition();
 
 }

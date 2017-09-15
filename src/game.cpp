@@ -30,6 +30,7 @@ Game::Game(Item **snake, sf::RenderWindow *app_instance) : items_ptr(snake), app
     snake_stop_flag = true;
     let_create_new_snake_food = true;
     let_create_new_snake_poison = true;
+    full_speed_active_flag = false;
 
     food_time_to_wait = 0;
     poison_time_to_wait = 0;
@@ -60,7 +61,7 @@ Game::~Game()
 void Game::do_move()
 {
 
-
+    cout << "do move wejscie "<<endl;
     int i;
     SnakeHead *h = nullptr;
     SnakeTail *b = nullptr;
@@ -74,6 +75,7 @@ void Game::do_move()
            // cout <<"obieg petli nr: "<<i<<endl;
             if(h = dynamic_cast<SnakeHead *> ( items_ptr[i]))
             {
+
                 prev_position  = h->getShape().getPosition();
                 items_ptr[i]->move(0,-SIGNLE_SNAKE_STEP);
                 h = dynamic_cast<SnakeHead *> ( items_ptr[i]);
@@ -91,23 +93,27 @@ void Game::do_move()
 
         break;
     case Down:
-        for(i = 0; i <= snake_length; i++)
+        for(i = 0; i < snake_length; i++)
         {
 
           //  cout <<"obieg petli nr: "<<i<<endl;
             if(h = dynamic_cast<SnakeHead *> ( items_ptr[i]))
             {
+                cout << "dynamic_cast<SnakeHead wejscie "<<endl;
                 prev_position  = h->getShape().getPosition();
                 items_ptr[i]->move(0,SIGNLE_SNAKE_STEP);
                 h = dynamic_cast<SnakeHead *> ( items_ptr[i]);
                 control_window_range(h);
+                   cout << "dynamic_cast<SnakeHead wyjscie "<<endl;
 
             }
             if(b = dynamic_cast<SnakeTail *>( items_ptr[i]))
             {
+                cout << "dynamic_cast<SnakeTail wejscie "<<endl;
                 prev_position_temp = b->get_position();
                 items_ptr[i]->set_position( prev_position);
                 prev_position = prev_position_temp;
+                cout << "dynamic_cast<SnakeTail wyjscie "<<endl;
 
             }
         }
@@ -161,10 +167,12 @@ void Game::do_move()
         }
         break;
     }
+    cout << "do move wyjscies "<<endl;
 }
 
 void Game::control_timer()
 {
+       //cout << "control_timer wejscie"<<endl;
 
     elapsed = clock.getElapsedTime();
     if(elapsed > sf::milliseconds(snake_step_speed_ms))
@@ -179,26 +187,23 @@ void Game::control_timer()
      elapsed = food_clock.getElapsedTime();
     if(elapsed.asSeconds() >= sf::seconds(food_time_to_wait).asSeconds() &&  let_create_new_snake_food == false)
     {
-       // cout <<"tick"<<endl;
        if(item_eat == nullptr)
             let_create_new_snake_food = true;
 
         food_clock.restart();
-       // cout <<"elapsed food"<<endl;
-       // elapsed = 0;
+
 
     }
 
      elapsed = poison_clock.getElapsedTime();
     if(elapsed.asSeconds() >= sf::seconds(poison_time_to_wait).asSeconds() && let_create_new_snake_poison == false)
     {
-       // cout <<"tick"<<endl;
+
         if(item_posion == nullptr)
             let_create_new_snake_poison = true;
 
         poison_clock.restart();
-       // cout <<"elapsed poison"<<endl;
-         //elapsed = 0;
+
     }
 
     if(!snake_stop_flag ) {
@@ -209,7 +214,7 @@ void Game::control_timer()
         string str = ss.str();
         menu->setGameTime(str);
     }
-
+//cout << "control_timer wyjscie"<<endl;
 
 
 }
@@ -275,15 +280,23 @@ void Game::control_events()
             {
               snake_stop_flag = false;
             }
-
-
-
-
-            if( sf::Keyboard::isKeyPressed( sf::Keyboard::Right ) )
-            {
-              //  cout << "Right"<<endl;
+            if( sf::Keyboard::isKeyPressed( sf::Keyboard::Space) ) {
+                if(full_speed_active_flag){
+                    snake_step_speed_ms = DEFAULT_SNAKE_SPEED_MS / 2;
+                    full_speed_active_flag = false;
+                }
+                else {
+                    snake_step_speed_ms = DEFAULT_SNAKE_SPEED_MS;
+                    full_speed_active_flag = true;
+                }
+            }
+            if( sf::Keyboard::isKeyPressed( sf::Keyboard::Right ) ) {
+                //  cout << "Right"<<endl;
                 if(direction != Left)
                     direction = Right;
+                if(acual_effect == Beer) {
+                    direction = Left;
+                }
             }
 
             if( sf::Keyboard::isKeyPressed( sf::Keyboard::Left ) )
@@ -296,13 +309,11 @@ void Game::control_events()
                     }
                 }
             }
-
             if( sf::Keyboard::isKeyPressed( sf::Keyboard::Up) )
             {
                 menu->MoveUp();
                 if(direction != Down)
                     direction = Up;
-
             }
 
             if( sf::Keyboard::isKeyPressed( sf::Keyboard::Down) )
@@ -311,8 +322,6 @@ void Game::control_events()
                 if(direction != Up)
                     direction = Down;
             }
-
-
         }
     }
 }
@@ -321,8 +330,7 @@ void Game::control_events()
 void Game::game_display()
 {
     int i;
-    //"graphics/background_psy.jpg"
-    //app_ptr->clear(sf::Color::Red);
+
     app_ptr->clear();
 
     SnakeHead *h;
@@ -342,19 +350,19 @@ void Game::game_display()
     }
 
 
-
-    for(i = 0; i < snake_length ; i++)
-    {
-        if(h = dynamic_cast<SnakeHead *> ( items_ptr[i]))
-        {
-            app_ptr->draw(h->getShape());
+    for(i = 0; i < snake_length ; i++) {
+        if(items_ptr[i] != nullptr) {
+            if(h = dynamic_cast<SnakeHead *> ( items_ptr[i])) {
+                app_ptr->draw(h->getShape());
+            }
+            if(b = dynamic_cast<SnakeTail *> ( items_ptr[i])) {
+                app_ptr->draw(b->getShape());
+            }
         }
-        if(b = dynamic_cast<SnakeTail *> ( items_ptr[i]))
-        {
-            app_ptr->draw(b->getShape());
-        }
+    }
 
-        if(item_eat != nullptr)
+
+       if(item_eat != nullptr)
         {
             if(f = dynamic_cast<SnakeFood *> ( item_eat))
             {
@@ -369,8 +377,6 @@ void Game::game_display()
             }
         }
 
-    }
-
 
 
       menu->draw(*app_ptr);
@@ -380,30 +386,21 @@ void Game::game_display()
 
 
 
-
+   // cout << "game_display wyjscie"<<endl;
 
 
 
 
 }
 
-void Game::game_init()
-{
-    items_ptr[0] = new SnakeHead(10, 10, Head);
-    items_ptr[1] = new SnakeTail(10, 10, Tail);
-    items_ptr[2] = new SnakeTail(10, 10, Tail);
-    items_ptr[3] = new SnakeTail(10, 10, Tail);
-    //  items_ptr[0]->move(35,0);
-    snake_length = 4;
-    snake_stop_flag = false;
-}
 
 void Game::create_new_snake_item()
 {
-
-    items_ptr[snake_length] = new SnakeTail(10, 10, Tail);
-    items_ptr[snake_length]->set_position(prev_position);
-    snake_length++;
+    //if(items_ptr[snake_length] == nullptr){
+        items_ptr[snake_length] = new SnakeTail(10, 10, Tail);
+        items_ptr[snake_length]->set_position(prev_position);
+        snake_length++;
+    //}
 }
 
 void Game::control_window_range(SnakeHead *head){
@@ -432,6 +429,7 @@ void Game::control_window_range(SnakeHead *head){
 }
 void Game::collision_detect()
 {
+    //cout << "collision_detect wejscie"<<endl;
     SnakeHead *h = nullptr;
     SnakeTail *b = nullptr;
     SnakeFood *f = nullptr;
@@ -450,7 +448,7 @@ void Game::collision_detect()
 
             if(h->getShape().getGlobalBounds().intersects(b->getShape().getGlobalBounds()))
             {
-                cout << "kolizja"<<endl;
+                //cout << "kolizja"<<endl;
 
                  stringstream ss;
                 ss <<setprecision(2)<< score << " - punktow w " << play_time.asSeconds() <<" sekund !";
@@ -488,6 +486,7 @@ void Game::collision_detect()
                     srand( time( NULL ) );
                     food_time_to_wait = (std::rand() % 7) + 2;
                     food_clock.restart();
+
                     if(acual_effect == Syringe){
                         snake_step_speed_ms = DEFAULT_SNAKE_SPEED_MS;
                         acual_effect = VOID;
@@ -516,8 +515,6 @@ void Game::collision_detect()
                     string str = ss.str();
                     menu->setScore( str, sf::Vector2f(10,10));
 
-
-
                     cout << "zabrana trucizna"<<endl;
                     if(item_posion->get_item_type() == Beer ){
                          acual_effect = Beer;
@@ -535,10 +532,12 @@ void Game::collision_detect()
                         acual_effect = Beer;
 
                     }
-                    delete item_posion;
-                    item_posion = nullptr;
-                    poison_time_to_wait = (std::rand() % 10) + 3;
-                    poison_clock.restart();
+                    if(item_posion != nullptr){
+                        delete item_posion;
+                        item_posion = nullptr;
+                        poison_time_to_wait = (std::rand() % 10) + 3;
+                        poison_clock.restart();
+                    }
                 }
                 else
                 {
@@ -547,9 +546,11 @@ void Game::collision_detect()
             }
         }
     }
+    //cout << "collision_detect wyjscie"<<endl;
 }
 void Game::make_item_to_eat()
 {
+        //cout << "make_item_to_eat wejsice"<<endl;
     srand( time( NULL ) );
     if(let_create_new_snake_food)
     {
@@ -559,8 +560,10 @@ void Game::make_item_to_eat()
 
         int food = std::rand() % 3;
         food += 2;
-        item_eat = new SnakeFood(x, y, (ItemType_t)food);
-        let_create_new_snake_food = false;
+        if(item_eat == nullptr){
+            item_eat = new SnakeFood(x, y, (ItemType_t)food);
+            let_create_new_snake_food = false;
+        }
     }
     if(let_create_new_snake_poison)
     {
@@ -568,11 +571,13 @@ void Game::make_item_to_eat()
         int yp = std::rand() % window_heigh - SIGNLE_SNAKE_STEP;
         int posion = std::rand() % 3;
         posion += 5;
-
-        item_posion = new SnakePoison(xp, yp, (ItemType_t)posion);
-        let_create_new_snake_poison = false;
+        if(item_posion == nullptr){
+            item_posion = new SnakePoison(xp, yp, (ItemType_t)posion);
+            let_create_new_snake_poison = false;
+        }
 
     }
+        // cout << "make_item_to_eat wyjscie"<<endl;
     //item_to_eat = new SnakeFood(10,10, Food);
 }
 
@@ -580,6 +585,7 @@ void Game::make_item_to_eat()
 
 void Game::new_game(){
 
+   //cout << "new_game wejscie"<<endl;
     for(int i = 0 ; i < snake_length; i++){
         delete items_ptr[i];
     }
@@ -592,12 +598,39 @@ void Game::new_game(){
         item_posion = nullptr;
     }
 
+    score = 0;
+    snake_step_speed_ms = DEFAULT_SNAKE_SPEED_MS;
     game_init();
     menu->show_hide_result(false);
+    play_clock.restart();
+    clock.restart();
+    food_clock.restart();
+    poison_clock.restart();
+    direction = Right;
+    prev_position = sf::Vector2f(0,0);
+    prev_position_temp = sf::Vector2f(0,0);
+    acual_effect = VOID;
     resumeGame();
-
+   // cout << "new_game wyjscie"<<endl;
 
 }
+
+
+void Game::game_init()
+{
+    items_ptr[0] = new SnakeHead(10, 10, Head);
+    items_ptr[1] = new SnakeTail(10, 10, Tail);
+    items_ptr[2] = new SnakeTail(10, 10, Tail);
+    items_ptr[3] = new SnakeTail(10, 10, Tail);
+      items_ptr[0]->move(SIGNLE_SNAKE_STEP*4,0);
+      items_ptr[0]->move(SIGNLE_SNAKE_STEP*3,0);
+      items_ptr[0]->move(SIGNLE_SNAKE_STEP*2,0);
+      items_ptr[0]->move(SIGNLE_SNAKE_STEP*1,0);
+    snake_length = 4;
+    snake_stop_flag = false;
+}
+
+
 void Game::pauzeGame() {
     snake_stop_flag = true;
 }
